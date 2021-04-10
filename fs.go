@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"strings"
 
 	"golang.org/x/net/webdav"
 )
@@ -36,7 +37,15 @@ func (_ *FS) Rename(ctx context.Context, oldName string, newName string) error {
 	return ErrNotSupported
 }
 
+func convertName(name string) string {
+	if name == "/" {
+		return "."
+	}
+	return strings.TrimPrefix(name, "/")
+}
+
 func (f *FS) OpenFile(ctx context.Context, name string, flag int, perm os.FileMode) (webdav.File, error) {
+	name = convertName(name)
 	httpFile, err := f.httpFS.Open(name)
 	if err != nil {
 		return nil, err
@@ -47,6 +56,7 @@ func (f *FS) OpenFile(ctx context.Context, name string, flag int, perm os.FileMo
 }
 
 func (f *FS) Stat(ctx context.Context, name string) (os.FileInfo, error) {
+	name = convertName(name)
 	info, err := fs.Stat(f.iofs, name)
 	if err != nil {
 		return nil, err
