@@ -38,7 +38,7 @@ func (_ *FS) Rename(ctx context.Context, oldName string, newName string) error {
 }
 
 func convertName(name string) string {
-	if name == "/" {
+	if name == "/" || name == "" {
 		return "."
 	}
 	return strings.TrimPrefix(name, "/")
