@@ -41,7 +41,9 @@ func convertName(name string) string {
 	if name == "/" || name == "" {
 		return "."
 	}
-	return strings.TrimPrefix(name, "/")
+	name = strings.TrimLeft(name, "/")  // trim all prefix /
+	name = strings.TrimRight(name, "/") // trim all suffix /
+	return name
 }
 
 func (f *FS) OpenFile(ctx context.Context, name string, flag int, perm os.FileMode) (webdav.File, error) {
